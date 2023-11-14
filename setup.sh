@@ -21,13 +21,7 @@ cat << 'EOF' > basic-auth/traefik_dynamic.toml
 EOF
 
 # Запись переменных в .env файл
-cat << EOF > .env
-DOMAIN=$DOMAIN
-EMAIL=$EMAIL
-EOF
-
-# Создание файла docker-compose.yml
-cat << 'EOF' > docker-compose.yml
+cat << EOF > docker-compose.yml
 version: '3'
 
 services:
