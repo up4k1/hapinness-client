@@ -63,6 +63,7 @@ services:
       - "traefik.http.routers.shlink-web-client.middlewares=basicauth@file"
     volumes:
       - "./servers.json:/usr/share/nginx/html/servers.json"
+      - "./my-config/:/usr/share/nginx/html/conf.d/"
 EOF
 
 echo "Настройка завершена."
