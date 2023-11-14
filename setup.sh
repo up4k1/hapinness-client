@@ -14,13 +14,19 @@ mkdir -p basic-auth
 htpasswd -cb basic-auth/.htpasswd $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD
 
 # Создание конфигурационного файла для Traefik
-cat << 'EOF' > basic-auth/traefik_dynamic.toml
+cat << EOF > basic-auth/traefik_dynamic.toml
 [http.middlewares]
   [http.middlewares.basicauth.basicAuth]
     usersFile = "/etc/traefik/basic-auth/.htpasswd"
 EOF
 
 # Запись переменных в .env файл
+cat << EOF > .env
+DOMAIN=$DOMAIN
+EMAIL=$EMAIL
+EOF
+
+# Создание файла docker-compose.yml
 cat << EOF > docker-compose.yml
 version: '3'
 
@@ -35,14 +41,16 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./letsencrypt:/letsencrypt"
       - "./basic-auth:/etc/traefik/basic-auth"
+      - "./basic-auth/traefik_dynamic.toml:/etc/traefik/dynamic.toml"
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=${EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.email=\${EMAIL}"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--providers.file.filename=/etc/traefik/dynamic.toml"
 
   shlink-web-client:
     image: shlinkio/shlink-web-client:latest
