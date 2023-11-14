@@ -14,7 +14,7 @@ mkdir -p basic-auth
 htpasswd -cb basic-auth/.htpasswd $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD
 
 # Создание конфигурационного файла для Traefik
-cat << EOF > basic-auth/traefik_dynamic.toml
+cat << 'EOF' > basic-auth/traefik_dynamic.toml
 [http.middlewares]
   [http.middlewares.basicauth.basicAuth]
     usersFile = "/etc/traefik/basic-auth/.htpasswd"
@@ -27,7 +27,7 @@ EMAIL=$EMAIL
 EOF
 
 # Создание файла docker-compose.yml
-cat << EOF > docker-compose.yml
+cat << 'EOF' > docker-compose.yml
 version: '3'
 
 services:
@@ -55,7 +55,7 @@ services:
     container_name: shlink-web-client
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.shlink-web-client.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.shlink-web-client.rule=Host(\`${DOMAIN}\`)"
       - "traefik.http.routers.shlink-web-client.entrypoints=websecure"
       - "traefik.http.routers.shlink-web-client.tls.certresolver=myresolver"
       - "traefik.http.routers.shlink-web-client.middlewares=basicauth@file"
